@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <title>فحص تعثر الطلاب</title>
+</head>
+<body>
+<h2> نموذج ادخال بيانات لطالب</h2>
+   <form id="studentForm">
+    
+      <lable for="studentId"> رقم الطالب (ID): </lable>
+      <input type="number" id="studentID" required min="1" max="4">
+      <br><br>
+
+    <!-- خانة درجة الطالب-->
+      <label for="studentAverage"> درجة الطالب:</label>
+      <input type="number" id="studentAverage" min="40" max="100" required>
+      <br><br>
+
+    <!--زر الارسال-->
+    <button type="submit"> فحص حالةالطالب</button> 
+    </form>
+
+ <!-- مكان لعرض النتيجة -->
+    <h3>النتيجة:</h3>
+    <div id="result" style="font-weight: bold; font-size: 18px;"></div>
+  <script>
+        // 1 & 2: تعريف مصفوفة الطلاب وتصفية المتعثرين كما بالصورة بالضبط
+        const students = [
+            { id: 1, average: 85 },
+            { id: 2, average: 42 }, // طالب متعثر
+            { id: 3, average: 90 },
+            { id: 4, average: 48 }  // طالب متعثر
+        ];
+
+        // تصفية المتعثرين وإضافة درجات الرأفة (+5)
+        const strugglingStudents = students.filter(s => s.average >= 40 && s.average <= 49);
+        const upgradedGrades = strugglingStudents.map(s => s.average + 5);
+
+        // 3: جمع الدرجات بعد التعديل
+        const totalUpgraded = upgradedGrades.reduce((sum, grade) => sum + grade, 0);
+
+        // 4: حساب المتوسط المعدل للمتعثرين
+        let upgradedAverage = 0;
+        if (strugglingStudents.length > 0) {
+            upgradedAverage = totalUpgraded / strugglingStudents.length;
+        }
+
+        // ربط النموذج مع بيانات المصفوفة عند الضغط على زر الفحص
+        document.getElementById('studentForm').addEventListener('submit', function(event) {
+            
+
+            const searchId = Number(document.getElementById('studentId').value);
+            const resultDiv = document.getElementById('result');
+
+            // البحث عن الطالب داخل المصفوفة بواسطة الـ ID
+            const foundStudent = students.find(s => s.id === searchId);
+
+            if (foundStudent) {
+                // التحقق هل هذا الطالب ضمن قائمة المتعثرين؟ (بين 40 و 49)
+                const isStruggling = foundStudent.average >= 40 && foundStudent.average <= 49;
+
+                if (isStruggling) {
+                    resultDiv.style.color = "orange";
+                    resultDiv.innerHTML = `
+                        الطالب رقم (${foundStudent.id}) درجاته (${foundStudent.average}) 👈 <b>طالب متعثر</b>.<br>
+                        تم إضافة 5 درجات رأفة له وأصبحت درجاته المعدلة تدخل في متوسط المتعثرين الإجمالي (${upgradedAverage}).
+                    `;
+                } else {
+                    resultDiv.style.color = "green";
+                    resultDiv.innerHTML = `
+                        الطالب رقم (${foundStudent.id}) درجاته (${foundStudent.average}) 👈 <b>غير متعثر (ناجح)</b>.
+                    `;
+                }
+            } else {
+                resultDiv.style.color = "red";
+                resultDiv.innerHTML = "عذراً، هذا الرقم غير موجود بالقائمة (أدخلي رقم من 1 إلى 4).";
+            }
+        });
+    </script>
+
+</body>
+</html>
+
+
+</body>
+</html>
